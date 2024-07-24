@@ -79,6 +79,7 @@ type Database struct {
 	ConnectionMaxLifeSeconds  int64 `json:"connection_max_life_seconds,omitempty"`
 	ConnectionMaxIdleSeconds  int64 `json:"connection_max_idle_seconds,omitempty"`
 	SlowThresholdMilliseconds int64 `json:"slow_threshold_milliseconds,omitempty"`
+	IgnoreRecordNotFoundError bool  `json:"ignore_record_not_found_err"`
 }
 
 func (db *Database) complete() {

@@ -39,8 +39,9 @@ func NewDB(driver, dsn string, commonConfig *aconfig.Database) (*gorm.DB, error)
 	alog.Sugar.Infof("database.NewDB: driver(%s) dsn(%s)", driver, dsn)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: gormwrapper.New(alog.Sugar, gormwrapper.Config{
-		SlowThreshold: time.Duration(commonConfig.SlowThresholdMilliseconds) * time.Millisecond,
-		LogLevel:      gormlogger.Info,
+		SlowThreshold:             time.Duration(commonConfig.SlowThresholdMilliseconds) * time.Millisecond,
+		LogLevel:                  gormlogger.Info,
+		IgnoreRecordNotFoundError: commonConfig.IgnoreRecordNotFoundError,
 	})})
 
 	if err != nil {
