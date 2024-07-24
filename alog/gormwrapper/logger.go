@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/bdcp-ops/alpha/alog"
@@ -18,8 +19,6 @@ type Config struct {
 	LogLevel                  gormlogger.LogLevel
 	IgnoreRecordNotFoundError bool
 }
-
-var ErrRecordNotFound = errors.New("record not found")
 
 func New(sugarLogger *zap.SugaredLogger, config Config) gormlogger.Interface {
 	var (
@@ -92,7 +91,7 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	if l.LogLevel > 0 {
 		elapsed := time.Since(begin)
 		switch {
-		case err != nil && l.LogLevel >= gormlogger.Error && (!errors.Is(err, ErrRecordNotFound) || !l.IgnoreRecordNotFoundError):
+		case err != nil && l.LogLevel >= gormlogger.Error && (!errors.Is(err, gorm.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError):
 			sql, rows := fc()
 			if rows == -1 {
 				l.sugarLogger.Errorw(
