@@ -15,9 +15,9 @@ import (
 )
 
 type Config struct {
-	SlowThreshold             time.Duration
-	LogLevel                  gormlogger.LogLevel
-	IgnoreRecordNotFoundError bool
+	SlowThreshold            time.Duration
+	LogLevel                 gormlogger.LogLevel
+	PrintRecordNotFoundError bool
 }
 
 func New(sugarLogger *zap.SugaredLogger, config Config) gormlogger.Interface {
@@ -91,7 +91,7 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	if l.LogLevel > 0 {
 		elapsed := time.Since(begin)
 		switch {
-		case err != nil && l.LogLevel >= gormlogger.Error && (!errors.Is(err, gorm.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError):
+		case err != nil && l.LogLevel >= gormlogger.Error && (!errors.Is(err, gorm.ErrRecordNotFound) || l.PrintRecordNotFoundError):
 			sql, rows := fc()
 			if rows == -1 {
 				l.sugarLogger.Errorw(
