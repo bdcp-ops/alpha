@@ -38,11 +38,10 @@ func NewDBWith(portName aconfig.PortName, appConfig *aconfig.Application, driver
 func NewDB(driver, dsn string, commonConfig *aconfig.Database) (*gorm.DB, error) {
 	alog.Sugar.Infof("database.NewDB: driver(%s) dsn(%s)", driver, dsn)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: gormwrapper.New(alog.Sugar, gormwrapper.Config{
-		SlowThreshold:            time.Duration(commonConfig.SlowThresholdMilliseconds) * time.Millisecond,
-		LogLevel:                 gormlogger.Info,
-		PrintRecordNotFoundError: commonConfig.PrintRecordNotFoundError,
-	})})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: gormwrapper.NewLoggerWrapper(alog.Sugar, gormwrapper.Config{
+		SlowThreshold: time.Duration(commonConfig.SlowThresholdMilliseconds) * time.Millisecond,
+		LogLevel:      gormlogger.Info,
+	}, commonConfig.PrintRecordNotFoundError)})
 
 	if err != nil {
 		alog.Sugar.Errorf("database.NewDB failed: %v", err)
